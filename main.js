@@ -5,9 +5,12 @@ const map = new maplibregl.Map({
     zoom: 1 // starting zoom
 });
 
+map.on("load", function () {
+
 fetch("https://docs.google.com/spreadsheets/d/1KO5utL4Ux9AiZtnTeQkzKu25SDCUj3p8AhhYMUbnSxQ/gviz/tq?tqx=out:csv&sheet=Sheet1")
     .then(response => response.text())
     .then(text => makeMap(text))
+});
 
 const makeMap = (csvData) => {
     csv2geojson.csv2geojson(csvData, {
@@ -15,7 +18,9 @@ const makeMap = (csvData) => {
         lonfield: 'lon',
         delimiter: ','
     }, function (error, data) {
-        map.on('load', function () {
+        data.features.map(feature => {})
+
+
             map.addSource('vacancies', {
                 type: 'geojson',
                 data: data,
@@ -67,22 +72,25 @@ const makeMap = (csvData) => {
                 const clusterSource = map.getSource('vacancies')
 
                 clusterSource.getClusterLeaves(
-                    clusterId, 
-                    pointCount, 
-                    0, 
+                    clusterId,
+                    pointCount,
+                    0,
                     (error, clusterFeatures) => {
-                        //document.getElementById("list").innerHTML = clusterFeatures
-                        clusterFeatures.map(feature => {
-                            document.getElementById('list').innerHTML += `<h4>${feature.properties["Вакансия"]}</h4><a href="${feature.properties["Ссылка на сайте Картетики"]}'>Подробнее</a><hr>"`
-                        })
+                      document.getElementById("list-selected").innerHTML =
+                        "<h2>Выбранные вакансии</h2>";
+                      clusterFeatures.map((feature) => {
+                        document.getElementById(
+                          "list-selected"
+                        ).innerHTML += `<h4>${feature.properties["Вакансия"]}</h4><a target="blank_" href='${feature.properties["Ссылка на сайте Картетики"]}'>Подробнее</a><hr>`;
+                      });
                     }
-                );
-            } else {
-                const unclusteredFeature = features[0]
-                document.getElementById('list').innerHTML = unclusteredFeature
-                console.log(unclusteredFeature)
-            }
-                
+                  );
+                } else {
+                  const unclusteredFeature = features[0];
+                  document.getElementById(
+                    "list-selected"
+                  ).innerHTML = `<h2>Выбранные вакансии</h2><h4>${unclusteredFeature.properties["Вакансия"]}</h4><a target="blank_" href='${unclusteredFeature.properties["Ссылка на сайте Картетики"]}'>Подробнее</a><hr>`;
+                }
                 
                 console.log(features)
 
@@ -96,5 +104,4 @@ const makeMap = (csvData) => {
                 map.getCanvas().style.cursor = ""
             })
         })
-    })
-}
+    }

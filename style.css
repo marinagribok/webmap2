@@ -1,3 +1,7 @@
+h2 {
+    margin: 20px;
+}
+
 #map {
     position: absolute;
     top: 0;
@@ -6,11 +10,14 @@
     left: 300px;
 }
 
-#list {
+#list-selected {
     position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
     width: 300px;
     overflow-y: auto;
+  
 }
+
+
